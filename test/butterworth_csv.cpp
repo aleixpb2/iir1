@@ -53,6 +53,12 @@ std::istream& operator>>(std::istream& str, CSVRow& data)
     return str;
 }
 
+void print_state (const std::ios& stream) {
+std::cout << " good()=" << stream.good();
+std::cout << " eof()=" << stream.eof();
+std::cout << " fail()=" << stream.fail();
+std::cout << " bad()=" << stream.bad();
+}
 
 class CSVIterator
 {
@@ -81,26 +87,17 @@ private:
 };
 
 
-int main()
-{
-    std::ifstream       file("plop.csv");
-
-    for(CSVIterator loop(file); loop != CSVIterator(); ++loop)
-    {
-        std::cout << "4th Element(" << (*loop)[3] << ")\n";
-    }
-}/*
-
-
 int main (int,char**)
 {
 
     // Open the csv input file
-    //
+    std::cout << "Reading CSV:" << std::endl;
+    std::ifstream file("./test/wind_ads_meas.csv");
+    print_state(file); std::cout << endl;
 
     // Open the csv output file
     std::ofstream myfile;
-    myfile.open ("filtered.csv");
+    myfile.open ("./test/filtered.csv");
     myfile << "angles_x,angles_x_lowpass" << std::endl;
 
 
@@ -114,14 +111,20 @@ int main (int,char**)
     // calc the coefficients
     f.setup (samplingrate, cutoff_frequency);
 
-    double b = 0;
-    for(int i=0;i<..;i++)
+    float angle_x_lowpass, angle_x;
+    CSVIterator loop(file);
+    ++loop;  // skip first row
+    while(loop != CSVIterator() && angle_x_lowpass <= 2)
     {
-        b = f.filter(a);
-        assert_print(!isnan(b),"Lowpass output is NAN\n");
-        myfile << a << "," << b << std::endl;
+        std::cout << (*loop)[4] << std::endl;
+        //angle_x = (float) (*loop)[4];  // (*loop)[4] is field.angle_x
+        //angle_x_lowpass = f.filter(angle_x);
+        //assert_print(!isnan(angle_x_lowpass),"Lowpass output is NAN\n");
+        //myfile << angle_x << "," << angle_x_lowpass << std::endl;
+
+        ++loop;
     }
 
     myfile.close();
     return 0;
-}*/
+}
