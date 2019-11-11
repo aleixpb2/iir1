@@ -98,7 +98,7 @@ int main (int,char**)
     // Open the csv output file
     std::ofstream myfile;
     myfile.open ("./test/filtered.csv");
-    myfile << "angles_x,angles_x_lowpass" << std::endl;
+    myfile << "time_ads,angles_x,angles_x_lowpass" << std::endl;
 
 
     // create the filter structure for 5th order
@@ -112,17 +112,20 @@ int main (int,char**)
     f.setup (samplingrate, cutoff_frequency);
 
     float angle_x_lowpass, angle_x;
-    CSVIterator loop(file);
-    ++loop;  // skip first row
-    while(loop != CSVIterator() && angle_x_lowpass <= 2)
-    {
-        std::cout << (*loop)[4] << std::endl;
-        //angle_x = (float) (*loop)[4];  // (*loop)[4] is field.angle_x
-        //angle_x_lowpass = f.filter(angle_x);
-        //assert_print(!isnan(angle_x_lowpass),"Lowpass output is NAN\n");
-        //myfile << angle_x << "," << angle_x_lowpass << std::endl;
+    CSVIterator it(file);
+    ++it;  // skip first row
+    long long min_time = stoll((*it)[0]);
+    double time_ads;
 
-        ++loop;
+    while(it != CSVIterator())
+    {
+        time_ads = (stoll((*it)[0]) - min_time)/1.0e9;
+        angle_x = std::stof((*it)[4]);  // (*loop)[4] is field.angle_x
+        angle_x_lowpass = f.filter(angle_x);
+        assert_print(!isnan(angle_x_lowpass),"Lowpass output is NAN\n");
+        myfile << time_ads << "," << angle_x << "," << angle_x_lowpass << std::endl;
+
+        ++it;
     }
 
     myfile.close();
