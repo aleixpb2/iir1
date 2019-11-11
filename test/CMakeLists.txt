@@ -9,6 +9,10 @@ add_executable (test_butterworth butterworth.cpp)
 target_link_libraries(test_butterworth iir_static)
 add_test(TestButterworth test_butterworth)
 
+add_executable (test_butterworth_csv butterworth_csv.cpp)
+target_link_libraries(test_butterworth_csv iir_static)
+add_test(TestButterworthCSV test_butterworth_csv)
+
 add_executable (test_chebyshev1 chebyshev1.cpp)
 target_link_libraries(test_chebyshev1 iir_static)
 add_test(TestChebyshev1 test_chebyshev1)
